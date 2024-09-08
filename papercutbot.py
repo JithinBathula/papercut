@@ -5,15 +5,18 @@ from openai import AsyncOpenAI
 import base64
 import aiohttp
 import io
-import pymysqlx
+import os
+import pymysql
+from dotenv import load_dotenv
+
+load_dotenv()
 
 ## telegram token
-TOKEN: Final = "7414557591:AAEOPbw0RXdSwX3cBtBPJR_sqDmpc5WKKo8"
+TOKEN: Final = os.getenv('TELEGRAM_BOT_TOKEN')
 BOT_USERNAME: Final = "@Trialpapercutbot"
 
 ## api key for open ai
-OPENAI_API_KEY = "sk-proj-GNPuVdrlqOqw7o8ScVGJT3BlbkFJrJFbcN1QhVfB8FHC92jt"
-
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 AI_GENERATED: Final = "Assesment book questions"
 REAL_PAPER: Final = "Past Year Questions"
 
@@ -138,11 +141,11 @@ import random
 
 # Database connection details
 DATABASE = {
-    'database': 'paper_cut',  # Changed from 'dbname' to 'database'
-    'user': 'root',
-    'password': '1212',
-    'host': '127.0.0.1',
-    'port': '3306',
+    'database': os.getenv('DATABASE_NAME'),
+    'user': os.getenv('DATABASE_USER'),
+    'password': os.getenv('DATABASE_PASSWORD'),
+    'host': os.getenv('DATABASE_HOST'),
+    'port': os.getenv('DATABASE_PORT')
 }
 
 # Connect to the PostgreSQL database
