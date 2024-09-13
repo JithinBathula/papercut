@@ -8,7 +8,7 @@ import io
 import os
 import pymysql
 from dotenv import load_dotenv
-from realquestionshandlers import menu_callback, start_command, cat_callback, grade_callback, subject_callback,subtopic_callback, error
+from realquestionshandlers import menu_callback, start_command, cat_callback, grade_callback, topic_callback, error
 from aicallbacks import ai_generated_callback, handle_image_upload, handle_text_message
 load_dotenv()
 
@@ -25,10 +25,10 @@ if __name__ == '__main__':
 
     # Callback Query Handlers
     app.add_handler(CallbackQueryHandler(menu_callback, pattern="^ai_generated|real_paper$"))
-    app.add_handler(CallbackQueryHandler(cat_callback, pattern="^primary|secondary$"))
+    app.add_handler(CallbackQueryHandler(cat_callback, pattern="^subject_"))
     app.add_handler(CallbackQueryHandler(grade_callback, pattern="^P[1-6]|Sec[1-3]$"))
-    app.add_handler(CallbackQueryHandler(subject_callback, pattern="^Math|Science|English$"))
-    app.add_handler(CallbackQueryHandler(subtopic_callback, pattern="^Algebra|Geometry|Numbers|Photosynthesis|Cells|Forces$"))
+    #app.add_handler(CallbackQueryHandler(subject_callback, pattern="^Math|Science|English$"))
+    app.add_handler(CallbackQueryHandler(topic_callback, pattern="^Algebra|Geometry|Numbers|Photosynthesis|Cells|Forces$"))
     app.add_handler(CallbackQueryHandler(ai_generated_callback, pattern="^upload_image|type_topic$"))
 
     # Message Handlers
