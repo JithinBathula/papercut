@@ -22,40 +22,77 @@ def connect_to_db():
     )
     return conn
 
-async def get_subjects_from_db():
-
-    query = "SELECT subject_name FROM subjects"  # Adjust the table and column name as needed.
+async def get_topics_for_grade_and_subject(grade_id, subject_id):
+    # Query to get unique topic_ids from past_paper_questions for the selected grade and subject
+    query = """
+    SELECT DISTINCT t.topic_name
+    FROM topics t
+    JOIN past_paper_questions ppq ON t.id = ppq.topic_id
+    WHERE ppq.grade_id = %s AND ppq.subject_id = %s
+    """
     
-    subjects = []
     conn = connect_to_db()
     cur = conn.cursor()
-    cur.execute(query)
+    cur.execute(query, (grade_id, subject_id))
+    topics = cur.fetchall()
+    cur.close()
+    conn.close()
+    
+    return topics
+
+async def get_grade_id(grade_name):
+    query = "SELECT id FROM grades WHERE grade_name = %s"
+    conn = connect_to_db()
+    cur = conn.cursor()
+    cur.execute(query, (grade_name,))
+    result = cur.fetchone()
+    cur.close()
+    conn.close()
+    return result[0] if result else None
+
+async def get_subject_id(subject_name):
+    query = "SELECT id FROM subjects WHERE subject_name = %s"
+    conn = connect_to_db()
+    cur = conn.cursor()
+    cur.execute(query, (subject_name,))
+    result = cur.fetchone()
+    cur.close()
+    conn.close()
+    return result[0] if result else None
+
+
+async def get_subjects_for_grade(grade_id):
+    query = """
+    SELECT DISTINCT s.subject_name
+    FROM subjects s
+    JOIN past_paper_questions ppq ON s.id = ppq.subject_id
+    WHERE ppq.grade_id = %s
+    """
+    
+    conn = connect_to_db()
+    cur = conn.cursor()
+    cur.execute(query, (grade_id,))
     subjects = cur.fetchall()
     cur.close()
     conn.close()
+    
     return subjects
  
-async def get_grades_for_subject(subject_name):
-    # Function to get grades associated with a selected subject from the database
-    query = """
-    SELECT g.grade_name 
-    FROM grades g
-    JOIN subject_grade sg ON g.id = sg.grade_id
-    JOIN subjects s ON sg.subject_id = s.id
-    WHERE s.subject_name = %s
-    """
+async def get_grades_from_db():
+    query = "SELECT grade_name FROM grades"
     
-    grades = []
     conn = connect_to_db()
     cur = conn.cursor()
-    cur.execute(query, (subject_name))
+    cur.execute(query)
     grades = cur.fetchall()
     cur.close()
     conn.close()
+    
     return grades
 
+
 # Function to retrieve random questions from the database
-def get_random_questions(grade, subject, topic, limit=1):
+async def get_random_questions(grade, subject, topic, limit=1):
     conn = connect_to_db()
     cur = conn.cursor()
 
@@ -79,21 +116,6 @@ def get_random_questions(grade, subject, topic, limit=1):
     conn.close()
     return questions
 
-# After grade, subject, and topic have been selected
-async def generate_questions(update, context):
-    grade = context.user_data["grade"]
-    subject = context.user_data["subject"]
-    topic = context.user_data["topic"]
 
-    # Fetch random questions from the database
-    questions = get_random_questions(grade, subject, topic)
-
-    # Respond with the questions
-    if questions:
-        for question, answer in questions:
-            formatted_message = f"**Question**: {question}\n**Answer**: {answer}"
-            await update.message.reply_text(formatted_message)
-    else:
-        await update.message.reply_text("No questions found for the selected criteria.")
 
 ##-----
