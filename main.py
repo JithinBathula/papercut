@@ -30,6 +30,7 @@ if __name__ == '__main__':
     #app.add_handler(CallbackQueryHandler(subject_callback, pattern="^Math|Science|English$"))
     app.add_handler(CallbackQueryHandler(topic_callback, pattern="^subject_"))
     app.add_handler(CallbackQueryHandler(generate_questions, pattern="^topic_"))
+    app.add_handler(CallbackQueryHandler(ai_generated_callback, pattern="^upload_image|type_topic$"))
 
     # Message Handlers
     app.add_handler(MessageHandler(filters.PHOTO, handle_image_upload))
