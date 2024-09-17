@@ -8,7 +8,7 @@ import io
 import os
 import pymysql
 from dotenv import load_dotenv
-from realquestionshandlers import menu_callback, start_command, cat_callback, topic_callback, generate_questions, error
+from realquestionshandlers import back_to_start, menu_callback, start_command, cat_callback, topic_callback, generate_questions, show_answer, new_question, error
 from aicallbacks import ai_generated_callback, handle_image_upload, handle_text_message
 load_dotenv()
 
@@ -24,12 +24,12 @@ if __name__ == '__main__':
     app.add_handler(CommandHandler("start", start_command))
 
     # Callback Query Handlers
-    app.add_handler(CallbackQueryHandler(menu_callback, pattern="^ai_generated|real_paper$"))
-    app.add_handler(CallbackQueryHandler(cat_callback, pattern="^grade_"))
-    #app.add_handler(CallbackQueryHandler(grade_callback, pattern="^P[1-6]|Sec[1-3]$"))
-    #app.add_handler(CallbackQueryHandler(subject_callback, pattern="^Math|Science|English$"))
-    app.add_handler(CallbackQueryHandler(topic_callback, pattern="^subject_"))
-    app.add_handler(CallbackQueryHandler(generate_questions, pattern="^topic_"))
+    app.add_handler(CallbackQueryHandler(menu_callback, pattern="^(ai_generated|real_paper|back_to_start)$"))
+    app.add_handler(CallbackQueryHandler(cat_callback, pattern="^(grade_.*|back_to_grades)$"))
+    app.add_handler(CallbackQueryHandler(topic_callback, pattern="^(subject_.*|back_to_subjects|back_to_grades)$"))
+    app.add_handler(CallbackQueryHandler(generate_questions, pattern="^(topic_.*|back_to_topics|show_answer|new_question)$"))
+    app.add_handler(CallbackQueryHandler(show_answer, pattern="^show_answer$"))
+    app.add_handler(CallbackQueryHandler(new_question, pattern="^new_question$"))
     app.add_handler(CallbackQueryHandler(ai_generated_callback, pattern="^upload_image|type_topic$"))
 
     # Message Handlers
