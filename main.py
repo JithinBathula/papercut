@@ -9,7 +9,7 @@ import os
 import pymysql
 from dotenv import load_dotenv
 from realquestionshandlers import back_to_start, menu_callback, start_command, cat_callback, topic_callback, generate_questions, show_answer, new_question, error
-from aicallbacks import ai_generated_callback, handle_image_upload, handle_text_message, ai_generated_callback_handler
+from aicallbacks import handle_image_upload, handle_text_message, ai_generated_callback_handler, main_menu_callback_handler, ai_generated_selection_callback
 load_dotenv()
 
 ## telegram token
@@ -30,8 +30,21 @@ if __name__ == '__main__':
     app.add_handler(CallbackQueryHandler(generate_questions, pattern="^(topic_.*|back_to_topics|show_answer|new_question)$"))
     app.add_handler(CallbackQueryHandler(show_answer, pattern="^show_answer$"))
     app.add_handler(CallbackQueryHandler(new_question, pattern="^new_question$"))
-    app.add_handler(CallbackQueryHandler(ai_generated_callback, pattern="^upload_image|type_topic$"))
-    app.add_handler(CallbackQueryHandler(ai_generated_callback_handler, pattern="^(ai_show_answer|ai_next_question|back_to_start)$"))
+    app.add_handler(
+        CallbackQueryHandler(
+            main_menu_callback_handler, pattern="^(ai_generated|real_paper|back_to_start)$"
+        )
+    )
+    app.add_handler(
+        CallbackQueryHandler(
+            ai_generated_selection_callback, pattern="^(upload_image|type_topic)$"
+        )
+    )
+    app.add_handler(
+        CallbackQueryHandler(
+            ai_generated_callback_handler, pattern="^(ai_show_answer|ai_next_question)$"
+        )
+    )
 
 
     # Message Handlers

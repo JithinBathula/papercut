@@ -13,43 +13,33 @@ REAL_PAPER: Final = "Past Year Questions"
 async def send_image_to_openai(base64_image):
     client = AsyncOpenAI(api_key=OPENAI_API_KEY)
     prompt = """
-Based on the provided image containing exam questions:
+Task: Analyze and Generate New Exam Questions
 
-1. Analyze the Questions:
-   a. Identify the main topic and subtopics covered.
-   b. Assess the difficulty level and complexity of the questions.
-   c. Note the question structure, format, and any specific patterns used.
+1. Question Analysis:
 
-2. Generate New Questions:
-   Create 2 new questions that:
-   a. Align with the same main topic and difficulty level.
-   b. Follow the same structure and format as the original questions.
-   c. Are relevant to the Singapore syllabus for this subject and level.
-   d. Have a clear, correct answer among the options provided.
+a. Identify the main topic and subtopics present in the provided exam questions.
+b. Evaluate the difficulty level and complexity of each question.
+c. Examine the structure and format of the questions, noting any patterns or specific types used.
 
-3. Quality Check:
-   For each generated question:
-   a. Verify that it's solvable and has one correct answer.
-   b. Check that the difficulty level matches that of the original questions.
-   c. Confirm the question tests understanding, not just recall of facts.
+2. Question Generation: Create 1 new questions that:
+a. Align with the same main topic and difficulty level as the original questions.
+b. MAKE SURE THERE IS ONLY 1 CORRECT ANSWER
+c. Follow the same structure and format as the original questions.
+d. Are relevant to the Singapore syllabus for this subject and grade level.
 
-4. Final Review:
-   a. Compare the new questions to the originals to ensure consistency in style and difficulty.
-   b. Verify that no irrelevant content has been included.
-   c. Make any necessary adjustments to improve clarity or alignment with the topic.
-   b. if there are options provided, make sure the answers are correct.
+3. Quality Check: For each new question:
+a. Ensure the question is solvable and has one correct answer.
+b. Confirm that the difficulty level is consistent with the original questions.
+c. Verify that the question tests understanding, rather than simple recall of facts.
 
-This is what you must show to the user and nothing else:
+Output to User. Your output must only be the questions in this format:
 
-Question 1:
 [Full question text]
 
-Question 2:
-[Full question text]
 
 """
     response = await client.chat.completions.create(
-        model="gpt-4o",  # Using gpt-4o-mini as per the documentation
+        model="gpt-4-turbo",  # Using gpt-4o-mini as per the documentation
         messages=[
             {
                 "role": "user",
@@ -68,7 +58,12 @@ Question 2:
                 ]
             }
         ],
-        max_tokens=1000, temperature=0.3
+    #         temperature=0.5,
+    # max_tokens=1500,
+    # top_p=0.9,
+    # frequency_penalty=0.2,
+    # presence_penalty=0.0,
+    # n=1  # Generate one question at a time
     )
     
     # res = await message_checker(response.choices[0].message.content)
@@ -84,40 +79,40 @@ Question 2:
 async def answers(text):
     client = AsyncOpenAI(api_key=OPENAI_API_KEY)
     response = await client.chat.completions.create(
-        model="gpt-4o", max_tokens=1000, temperature=0.3,
+        model="gpt-4-turbo", max_tokens=1000, temperature=1,
         messages=[
             {
                 "role": "system",
                 "content": '''
-You are an experienced educator for Singapore students. For each question provided, follow these steps:
+Task: Solve and Explain Exam Questions
+
+You are an experienced educator for Singapore students. For question provided, follow this process:
 
 1. Problem-Solving Process:
-   a. Break down the problem into clear, logical steps.
-   b. Solve each step sequentially.
-   c. Provide a very short explanation for each step, ensuring it's understandable for students.
+a. Break down the problem into clear and logical steps.
+b. Solve each step sequentially and accurately.
 
 2. Answer Formulation:
-   a. After completing all steps, state the final answer clearly.
+a. After completing all steps, state the final answer clearly.
+b. Provide a brief explanation summarizing the final answer and key insights from the solution process.
 
-3. Quality Check:
-   a. Review your solution and answer for accuracy.
-   b. Verify that your explanations are clear and appropriate for the student level.
-   c. If you spot any errors or areas for improvement, make necessary corrections.
+3. Quality Assurance:
+a. Double-check the solution and final answer for accuracy and adherence to the Singapore syllabus.
+b. Ensure that the explanations are clear, aligned with the student's learning level, and support deep understanding of the topic.
+c. Correct any errors or unclear explanations before finalizing the solution.
 
-4. Repeat:
-   Follow this process for each question provided in the set.
+4. Final Output Format (for each question) This is the only thing you must output and nothing else:
 
-Output Format. This is the only thing you must show to the user. No need to show the steps to the user. This is just for you to solve the porblem better:
-For each question, structure your response as follows:
-
-Solution:
-
+Short Explanation: [Provide a short explanation of the final answer and reasoning in 2 sentences]
 Final Answer: [State the answer clearly]
-Short Explanation of the Answer
 
-[Move on to the next question and repeat the process]
+REMEMBER TO ONLY SHOW THE SHORT EXPLANATION AND THE FINAL ANSWER. NO NEED TO SEND THE STEPS IN THE RESPONSE
 
-Remember to adapt your language and explanations to suit the educational level of Singapore students, and ensure all mathematical or scientific concepts used are accurate and relevant to the Singapore curriculum.
+Important Guidelines:
+Tailor your language and explanations to suit the educational level of Singapore students.
+Ensure that all mathematical and scientific concepts used are accurate and relevant to the Singapore curriculum.
+The solutions must be correct without fail, and the explanations must promote clear understanding.
+
 '''
             },
             {
@@ -138,39 +133,28 @@ async def chat_with_gpt(text):
             {
                 "role": "system",
                 "content": '''
-Based on the provided image containing exam questions:
+Task: Generate Exam Questions Aligned with Singapore Curriculum
 
-1. Analyze the Questions:
-   a. Identify the main topic and subtopics covered.
-   b. Assess the difficulty level and complexity of the questions.
-   c. Note the question structure, format, and any specific patterns used.
+You are an experienced educator for Singapore students. Based on the provided Grade, Subject, and Topic, follow these steps to create two high-quality exam questions:
 
-2. Generate New Questions:
-   Create 2 new questions that:
-   a. Align with the same main topic and difficulty level.
-   b. Follow the same structure and format as the original questions.
-   c. Are relevant to the Singapore syllabus for this subject and level.
-   d. Have a clear, correct answer among the options provided.
-
-3. Quality Check:
-   For each generated question:
-   a. Verify that it's solvable and has one correct answer.
-   b. Check that the difficulty level matches that of the original questions.
-   c. Confirm the question tests understanding, not just recall of facts.
-
-4. Final Review:
-   a. Compare the new questions to the originals to ensure consistency in style and difficulty.
-   b. Verify that no irrelevant content has been included.
-   c. Make any necessary adjustments to improve clarity or alignment with the topic.
-   b. if there are options provided, make sure the answers are correct.
-
-This is what you must show to the user and nothing else:
-
-Question 1:
-[Full question text]
-
-Question 2:
-[Full question text]
+1. Question Generation:
+a. Create one questions that are aligned with the Singapore curriculum standards for the specified grade and topic.
+b. Ensure one questions cover different aspects of the topic, testing both conceptual understanding and application.
+c. Question must be of the currect difficulty with respect to the grade.
+2. Question Format:
+a. Provide varied question types, any of the following:
+Multiple-choice (with four options and one correct answer).
+Short-answer or structured response.
+Essay-type or open-ended question (optional, depending on the grade and subject).
+b. Question should have clear instructions and context to guide students.
+3. Alignment with the Singapore Curriculum:
+Ensure that the questions are relevant to the Singaporean syllabus for the subject and grade level.
+The content and concepts covered should reflect current curriculum standards and be appropriate for the student’s cognitive level.
+4. Clarity and Precision:
+Make sure the questions are clear and unambiguous.
+Provide precise instructions for how students should respond (e.g., “Choose the best answer,” or “Explain your reasoning in two sentences”).
+Output structure to show:
+[Question]
 '''
             },
             {
@@ -180,5 +164,44 @@ Question 2:
         ]
     )
 
+    res = response.choices[0].message.content
+    return res
+    
+
+async def checker(text):
+    client = AsyncOpenAI(api_key=OPENAI_API_KEY)
+    prompt = """
+You will be presented with a question. This question can be multiple-choise, short answer or long answer. Your goal is to check if the question makes sense and that there is only one valid answer. If the question does not make sense. Then you must update the question a bit to make it make sense. REMEMBER, ONLY 1 CORRECT ANSWER FOR THE QUESTION. Your output would just be the question, dont mention the changes you did or didnt do, just the question. If its MCQ, make sure that the only one of the options is correct. If not, change them such that only 1 is correct.
+"""
+    response = await client.chat.completions.create(
+        model="gpt-4",  # Using gpt-4o-mini as per the documentation
+        messages=[
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "system",
+                        "text": prompt  
+                    },
+                    {
+                        "role": "user",
+                        "content": text
+                    }
+                ]
+            }
+        ],
+    #         temperature=0.5,
+    # max_tokens=1500,
+    # top_p=0.9,
+    # frequency_penalty=0.2,
+    # presence_penalty=0.0,
+    # n=1  # Generate one question at a time
+    )
+    
+    # res = await message_checker(response.choices[0].message.content)
+    
+    # # Clean the response to ensure it's properly formatted for Telegram
+    # res = res.replace("*", "").replace("_", "").replace('#',"").replace('---',"")  # In case ** or other symbols come back, remove or replace with acceptable markdown.
+    
     res = response.choices[0].message.content
     return res
