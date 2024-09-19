@@ -28,12 +28,12 @@ async def menu_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
 
-    if query.data == "ai_generated":
+    if query.data == "ai_generated" :
         context.user_data["question_type"] = AI_GENERATED
         keyboard = [
             [InlineKeyboardButton("Upload Image", callback_data="upload_image")],
-            [InlineKeyboardButton("Type Topic", callback_data="type_topic")],
-            [InlineKeyboardButton("Back", callback_data="back_to_start")]  # Back to start
+            [InlineKeyboardButton("Type Topic", callback_data="type_topic")]
+            
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
         if query.message:
@@ -41,7 +41,7 @@ async def menu_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         else:
             await context.bot.send_message(chat_id=query.from_user.id, text="Choose how to generate AI-based questions:", reply_markup=reply_markup)
 
-    elif query.data == "real_paper":
+    elif query.data == "real_paper" :
         grades = await get_grades_from_db()
         valid_grades = [grade_tuple[0] for grade_tuple in grades if isinstance(grade_tuple[0], str) and grade_tuple[0].strip()]
 
@@ -54,7 +54,7 @@ async def menu_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         keyboard = [
             [InlineKeyboardButton(grade, callback_data=f"grade_{grade}")] for grade in valid_grades
-        ] + [[InlineKeyboardButton("Back", callback_data="back_to_start")]]  # Back button to start
+        ] 
 
         reply_markup = InlineKeyboardMarkup(keyboard)
         context.user_data["question_type"] = REAL_PAPER
@@ -63,7 +63,7 @@ async def menu_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await query.edit_message_text(text="Choose your grade:", reply_markup=reply_markup)
         else:
             await context.bot.send_message(chat_id=query.from_user.id, text="Choose your grade:", reply_markup=reply_markup)
-
+    
     elif query.data == "back_to_start":
         await start_command(update, context)
 
@@ -77,7 +77,7 @@ async def cat_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     elif query.data == "back_to_grades":
         # Redirect to grade selection
-        query.data = "real_paper"
+        #query.data = "real_paper"
         await menu_callback(update, context)
         return
 
@@ -97,7 +97,7 @@ async def cat_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     keyboard = [
         [InlineKeyboardButton(subject, callback_data=f"subject_{subject}")] for subject in valid_subjects
-    ] + [[InlineKeyboardButton("Back", callback_data="back_to_grades")]]  # Back button to grades
+    ] 
 
     reply_markup = InlineKeyboardMarkup(keyboard)
 
@@ -113,13 +113,13 @@ async def topic_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if query.data == "back_to_grades":
         # Redirect to grade selection
-        query.data = "real_paper"
+        #query.data = "real_paper"
         await menu_callback(update, context)
         return
     elif query.data == "back_to_subjects":
         # Redirect to subject selection
         grade = context.user_data.get("selected_grade")
-        query.data = f"grade_{grade}"
+        #query.data = f"grade_{grade}"
         await cat_callback(update, context)
         return
 
@@ -141,8 +141,7 @@ async def topic_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     keyboard = [
         [InlineKeyboardButton(topic, callback_data=f"topic_{topic}")] for topic in valid_topics
-    ] + [[InlineKeyboardButton("Back", callback_data="back_to_subjects")]]  # Back button to subjects
-
+    ] 
     reply_markup = InlineKeyboardMarkup(keyboard)
 
     if query.message:
@@ -181,9 +180,7 @@ async def generate_questions(update: Update, context: ContextTypes.DEFAULT_TYPE)
             context.user_data["current_answer"] = answer  # Store the answer
             formatted_question = f"<b>Question</b>: {question}"
             keyboard = [
-                [InlineKeyboardButton("Show Answer", callback_data="show_answer")],
-                [InlineKeyboardButton("Back", callback_data="back_to_topics")]  # Back button to topics
-            ]
+                [InlineKeyboardButton("Show Answer", callback_data="show_answer")]]
             reply_markup = InlineKeyboardMarkup(keyboard)
             if query.message:
                 await query.message.reply_text(formatted_question, reply_markup=reply_markup, parse_mode=ParseMode.HTML)
