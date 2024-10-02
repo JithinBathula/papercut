@@ -8,13 +8,12 @@ import io
 import os
 import pymysql
 from dotenv import load_dotenv
-from realquestionshandlers import back_to_start, menu_callback, start_command, cat_callback, topic_callback, generate_questions, show_answer, new_question, error
+from realquestionshandlers import back_to_start, menu_callback, start_command, cat_callback, topic_callback, generate_questions, show_answer, new_question, error, helphandler
 from aicallbacks import handle_image_upload, handle_text_message, ai_generated_callback_handler, main_menu_callback_handler, ai_generated_selection_callback
 load_dotenv()
 
 ## telegram token
 TOKEN: Final = os.getenv('TELEGRAM_BOT_TOKEN')
-BOT_USERNAME: Final = "@Trialpapercutbot"
 
 # Main function
 if __name__ == '__main__':
@@ -22,6 +21,7 @@ if __name__ == '__main__':
 
     # Command Handlers
     app.add_handler(CommandHandler("start", start_command))
+    app.add_handler(CommandHandler("help", helphandler))
 
     # Callback Query Handlers
     app.add_handler(CallbackQueryHandler(menu_callback, pattern="^(ai_generated|real_paper|back_to_start)$"))

@@ -156,7 +156,7 @@ async def handle_image_upload(update: Update, context: ContextTypes.DEFAULT_TYPE
         context.user_data["image_data"] = base64_image
         context.user_data["generation_mode"] = "image"
 
-        await update.message.reply_text("Image received. Generating the first AI question...")
+        await update.message.reply_text("Image received. Generating the question.")
         await generate_and_send_question(update, context)
     else:
         await update.message.reply_text("Please select 'Upload Image' first.")
@@ -172,7 +172,7 @@ async def handle_text_message(update: Update, context: ContextTypes.DEFAULT_TYPE
         context.user_data["topic"] = topic
         context.user_data["generation_mode"] = "topic"
 
-        await update.message.reply_text(f"Topic '{topic}' received. Generating the first AI question...")
+        await update.message.reply_text("Generating the question.")
         await generate_and_send_question(update, context)
     else:
         await update.message.reply_text("I didn't understand that. Please use the provided buttons to navigate.")

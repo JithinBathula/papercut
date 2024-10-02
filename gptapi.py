@@ -32,6 +32,7 @@ a. Ensure the question is solvable and has one correct answer.
 b. Confirm that the difficulty level is consistent with the original questions.
 c. Verify that the question tests understanding, rather than simple recall of facts.
 
+Output format must be in simple text. For example, fractions must just be a simple / and so on.
 Output to User. Your output must only be the questions in this format:
 
 [Full question text]
@@ -39,7 +40,7 @@ Output to User. Your output must only be the questions in this format:
 
 """
     response = await client.chat.completions.create(
-        model="gpt-4-turbo",  # Using gpt-4o-mini as per the documentation
+        model="gpt-4o",  # Using gpt-4o-mini as per the documentation
         messages=[
             {
                 "role": "user",
@@ -58,7 +59,7 @@ Output to User. Your output must only be the questions in this format:
                 ]
             }
         ],
-    #         temperature=0.5,
+            temperature=0.5,
     # max_tokens=1500,
     # top_p=0.9,
     # frequency_penalty=0.2,
@@ -79,7 +80,7 @@ Output to User. Your output must only be the questions in this format:
 async def answers(text):
     client = AsyncOpenAI(api_key=OPENAI_API_KEY)
     response = await client.chat.completions.create(
-        model="gpt-4-turbo", max_tokens=1000, temperature=1,
+        model="gpt-4o", max_tokens=1000, temperature=1,
         messages=[
             {
                 "role": "system",
@@ -106,7 +107,7 @@ c. Correct any errors or unclear explanations before finalizing the solution.
 Short Explanation: [Provide a short explanation of the final answer and reasoning in 2 sentences]
 Final Answer: [State the answer clearly]
 
-REMEMBER TO ONLY SHOW THE SHORT EXPLANATION AND THE FINAL ANSWER. NO NEED TO SEND THE STEPS IN THE RESPONSE
+REMEMBER TO ONLY SHOW THE SHORT EXPLANATION AND THE FINAL ANSWER. NO NEED TO SEND THE STEPS IN THE RESPONSE. IF THERE ARE MORE THAN 1 ANSWER, PROVIDE ALL THE CORRECt ANSWERS
 
 Important Guidelines:
 Tailor your language and explanations to suit the educational level of Singapore students.
@@ -135,26 +136,26 @@ async def chat_with_gpt(text):
                 "content": '''
 Task: Generate Exam Questions Aligned with Singapore Curriculum
 
-You are an experienced educator for Singapore students. Based on the provided Grade, Subject, and Topic, follow these steps to create two high-quality exam questions:
+You are an experienced educator for Singapore students. Based on the provided Grade, Subject, and Topic, follow these steps to create 1 high-quality exam questions:
 
 1. Question Generation:
-a. Create one questions that are aligned with the Singapore curriculum standards for the specified grade and topic.
-b. Ensure one questions cover different aspects of the topic, testing both conceptual understanding and application.
+a. Create one question that is aligned with the Singapore curriculum standards for the specified grade and topic.
+b. Ensure the question cover different aspects of the topic, testing both conceptual understanding and application.
 c. Question must be of the currect difficulty with respect to the grade.
+
 2. Question Format:
-a. Provide varied question types, any of the following:
-Multiple-choice (with four options and one correct answer).
-Short-answer or structured response.
-Essay-type or open-ended question (optional, depending on the grade and subject).
-b. Question should have clear instructions and context to guide students.
+a. Question format must be simple to read as this is aimed towards children. For example, fractions just use / instead of something complicated.
+b. Question should have clear instructions.
+
 3. Alignment with the Singapore Curriculum:
 Ensure that the questions are relevant to the Singaporean syllabus for the subject and grade level.
 The content and concepts covered should reflect current curriculum standards and be appropriate for the student’s cognitive level.
+
 4. Clarity and Precision:
 Make sure the questions are clear and unambiguous.
-Provide precise instructions for how students should respond (e.g., “Choose the best answer,” or “Explain your reasoning in two sentences”).
+Provide precise instructions for how students should respond (e.g., “Choose the best answer,” or “Explain your reasoning in two sentences”). Make sure the questnos are answerable and have only 1 correct answer.
 Output structure to show:
-[Question]
+Question
 '''
             },
             {
@@ -174,7 +175,7 @@ async def checker(text):
 You will be presented with a question. This question can be multiple-choise, short answer or long answer. Your goal is to check if the question makes sense and that there is only one valid answer. If the question does not make sense. Then you must update the question a bit to make it make sense. REMEMBER, ONLY 1 CORRECT ANSWER FOR THE QUESTION. Your output would just be the question, dont mention the changes you did or didnt do, just the question. If its MCQ, make sure that the only one of the options is correct. If not, change them such that only 1 is correct.
 """
     response = await client.chat.completions.create(
-        model="gpt-4",  # Using gpt-4o-mini as per the documentation
+        model="gpt-4o",  # Using gpt-4o-mini as per the documentation
         messages=[
             {
                 "role": "user",

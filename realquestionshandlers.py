@@ -218,3 +218,19 @@ async def new_question(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # Error Handler
 async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):
     print(f"Update {update} caused error: {context.error}")
+
+# Help Command Handler
+async def helphandler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    help_text = (
+        "Welcome to the StudyBot Help!\n\n"
+        "Here's how you can use this bot:\n\n"
+        "/start - Start interacting with the bot.\n"
+        "/help - Show this help message.\n\n"
+        "You have two main options:\n"
+        "1. Assessment Book Questions: Generate AI-based questions by uploading an image or typing a topic.\n"
+        "2. Past Year Questions: Access past exam questions by selecting your grade, subject, and topic.\n\n"
+        "Navigation Tips:\n"
+        "- Use the buttons provided to navigate through options.\n"
+        "- If you ever get lost, you can always return to the main menu by typing /start or selecting 'Back to Start' where available.\n\n"
+    )
+    await update.message.reply_text(help_text, parse_mode=ParseMode.HTML)
