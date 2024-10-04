@@ -40,7 +40,7 @@ Output to User. Your output must only be the questions in this format:
 
 """
     response = await client.chat.completions.create(
-        model="gpt-4o",  # Using gpt-4o-mini as per the documentation
+        model="ft:gpt-4o-mini-2024-07-18:personal:paper-cut:A0VCkgl2",  # Using gpt-4o-mini as per the documentation
         messages=[
             {
                 "role": "user",
